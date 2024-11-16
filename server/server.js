@@ -13,7 +13,7 @@ app.use(express.json())
 app.use(cors())
 
 // API routes
-app.get("/", (req, res) => res.send("Puerto 4000 activo"))
+app.get("/", (req, res) => res.send(`Conectado al puerto ${PORT}`))
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`)
