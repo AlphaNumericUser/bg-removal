@@ -4,6 +4,8 @@ import userModel from "../models/userModel.js"
 const clerkWebhooks = async (req, res) => {
 
     try {
+        console.log("Webhook recibido:", req.headers);
+        console.log("Cuerpo del webhook:", req.body);
 
         // Create a Svix instance with clerk webhook secret
         const webhook = new Webhook(process.env.CLERK_WEBHOOK_SECRET)
@@ -15,23 +17,26 @@ const clerkWebhooks = async (req, res) => {
         }))
 
         const { data, type } = req.body
+        console.log("Tipo de evento:", type);
 
         switch (type) {
             case "user.created": {
+                console.log("Creando usuario con datos:", data);
                 const userData = {
                     clerkId: data.id,
-                    email: data.email_address[0].email_address,
+                    email: data.email_addresses[0].email_address,
                     firstName: data.first_name,
                     lastName: data.last_name,
                     photo: data.image_url,
                 }
                 await userModel.create(userData)
+                console.log("Usuario creado:", userData);
                 res.json({ success: true, message: "Usuario creado exitosamente" })
                 break;
             }   
             case "user.updated": {
                 const userData = {
-                    email: data.email_address[0].email_address,
+                    email: data.email_addresses[0].email_address,
                     firstName: data.first_name,
                     lastName: data.last_name,
                     photo: data.image_url,
@@ -50,7 +55,7 @@ const clerkWebhooks = async (req, res) => {
         }
 
     } catch (error) {
-        console.error(error.message)
+        console.error("Error en clerkWebhooks:", error.message);
         res.json({ success: false, message: error.message })
     }
 
