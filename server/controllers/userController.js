@@ -10,11 +10,11 @@ const clerkWebhooks = async (req, res) => {
         // Create a Svix instance with clerk webhook secret
         const webhook = new Webhook(process.env.CLERK_WEBHOOK_SECRET)
 
-        await webhook.verify(JSON.stringify(req.body, {
+        await webhook.verify(req.rawBody.toString(), {
             "svix-id": req.headers["svix-id"],
             "svix-timestamp": req.headers["svix-timestamp"],
             "svix-signature": req.headers["svix-signature"]
-        }))
+        })
 
         const { data, type } = req.body
         console.log("Tipo de evento:", type);
