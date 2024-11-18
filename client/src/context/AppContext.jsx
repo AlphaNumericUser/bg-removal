@@ -25,13 +25,10 @@ const AppContextProvider = (props) => {
             const token = await getToken();
             const response = await axios.get(`${backendUrl}/api/user/credits`, { headers: { token } });
             const { data } = response;
-            console.log(data);
             if (data.success) {
                 setcredit(data.data);
-                console.log(data.data);
             }
         } catch (error) {
-            console.log("Entramos al catch");
             console.error(error);
             toast.error(error.message);
         }
@@ -65,8 +62,27 @@ const AppContextProvider = (props) => {
         }
     }
 
+    const stripePayment = async () => {
+        try {
+            console.log('Iniciando pago');
+            if (!isSignedIn) {
+                return openSignIn();
+            }
+            const token = await getToken();
+            const { data } = await axios.post(`${backendUrl}/api/checkout/create-session`, {}, {
+                headers: { token }
+            });
+            console.log(data);
+            // Redirigir al usuario a Stripe Checkout
+            window.location.href = data.url;
+        } catch (error) {
+            console.error(error);
+            toast.error(error.response?.data?.error || 'Error al procesar el pago.');
+        }
+    }
+
     const value = {
-        credit, setcredit, loadCreditsData, backendUrl, image, setImage, removeBG, resultImage, setResultImage
+        credit, setcredit, loadCreditsData, backendUrl, image, setImage, removeBG, resultImage, setResultImage, stripePayment
     }
 
     return (

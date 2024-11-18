@@ -1,6 +1,11 @@
+import { useContext } from 'react';
 import { assets, plans } from '../assets/assets'
+import { AppContext } from '../context/AppContext';
 
 const BuyCredits = () => {
+
+  const { stripePayment } = useContext(AppContext);
+
   return (
     <div className="min-h-[80vh] text-center pt-14 mb-10" >
 
@@ -31,7 +36,10 @@ const BuyCredits = () => {
                   ${ item.price }
                 </span>/ { item.credits } credits
               </p>
-              <button className='w-full bg-gray-800 text-white mt-8 text-sm rounded-md py-2.5 min-w-52' >
+              <button
+                onClick={ () => stripePayment() }
+                className='w-full bg-gray-800 text-white mt-8 text-sm rounded-md py-2.5 min-w-52' 
+                >
                 Purchase
               </button>
             </div>

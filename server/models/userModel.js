@@ -11,4 +11,20 @@ const userSchema = new mongoose.Schema({
 
 const userModel = mongoose.models.user || mongoose.model("user", userSchema);
 
+// Función para actualizar los créditos del usuario
+export const updateCredits = async (userId, credits) => {
+    try {
+        const user = await userModel.findById(userId);
+        if (user) {
+            user.creditBalance += credits;
+            await user.save();
+        } else {
+            throw new Error('Usuario no encontrado');
+        }
+    } catch (error) {
+        console.error('Error al actualizar los créditos:', error);
+        throw error;
+    }
+};
+
 export default userModel;
