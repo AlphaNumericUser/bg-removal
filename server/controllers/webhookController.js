@@ -1,20 +1,14 @@
-// server/controllers/webhookController.js
-import Stripe from 'stripe';
-import userModel, { updateCredits } from '../models/userModel.js';
+// controllers/webhookController.js
+import userModel from '../models/userModel.js';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
-
-const handleStripeWebhook = async (req, res) => {
-  const sig = req.headers['stripe-signature'];
-
+export const handleStripeWebhook = async (buf, sig, stripe, endpointSecret) => {
   let event;
 
   try {
-    event = stripe.webhooks.constructEvent(req.rawBody, sig, endpointSecret);
+    event = stripe.webhooks.constructEvent(buf, sig, endpointSecret);
   } catch (err) {
     console.error('Webhook signature verification failed:', err.message);
-    return res.status(400).send(`Webhook Error: ${err.message}`);
+    throw new Error(`Webhook Error: ${err.message}`);
   }
 
   // Handle the event
@@ -29,11 +23,11 @@ const handleStripeWebhook = async (req, res) => {
       console.log(`Créditos actualizados para el usuario con clerkId: ${clerkId}`);
     } catch (error) {
       console.error('Error al actualizar créditos:', error);
+      throw new Error('Error al actualizar créditos');
     }
+  } else {
+    console.log(`Evento no manejado: ${event.type}`);
   }
-
-  // Return a response to acknowledge receipt of the event
-  res.json({ received: true });
 };
 
 const updateCreditsByClerkId = async (clerkId, credits) => {
@@ -45,5 +39,3 @@ const updateCreditsByClerkId = async (clerkId, credits) => {
     throw new Error('Usuario no encontrado');
   }
 };
-
-export { handleStripeWebhook };

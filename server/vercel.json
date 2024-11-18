@@ -2,19 +2,27 @@
     "version": 2,
     "builds": [
         {
-            "src": "server.js",
-            "use": "@vercel/node",
-            "config": {
-                "includeFiles": [
-                    "dist/**"
-                ]
-            }
+            "src": "api/**/*.js",
+            "use": "@vercel/node"
         }
     ],
     "routes": [
         {
+            "src": "/api/webhook",
+            "dest": "/api/webhook.js"
+        },
+        {
+            "src": "/api/checkout",
+            "dest": "/api/checkout.js"
+        },
+        {
+            "src": "/api/(.*)",
+            "dest": "/api/$1.js"
+        },
+        {
             "src": "/(.*)",
-            "dest": "server.js"
+            "status": 404,
+            "dest": "/404.html"
         }
     ]
 }
