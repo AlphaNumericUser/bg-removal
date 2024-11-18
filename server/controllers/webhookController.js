@@ -1,4 +1,4 @@
-// controllers/webhookController.js
+// server/controllers/webhookController.js
 import userModel from '../models/userModel.js';
 
 export const handleStripeWebhook = async (buf, sig, stripe, endpointSecret) => {
@@ -11,7 +11,7 @@ export const handleStripeWebhook = async (buf, sig, stripe, endpointSecret) => {
     throw new Error(`Webhook Error: ${err.message}`);
   }
 
-  // Handle the event
+  // Manejar el evento
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
     const clerkId = session.metadata.clerkId;

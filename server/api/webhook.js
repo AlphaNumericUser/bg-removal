@@ -1,4 +1,4 @@
-// api/webhook.js
+// server/api/webhook.js
 import { buffer } from 'micro';
 import { handleStripeWebhook } from '../controllers/webhookController.js';
 import Stripe from 'stripe';
